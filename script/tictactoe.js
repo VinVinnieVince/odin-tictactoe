@@ -232,12 +232,15 @@ const Gameboard = ( () => {
         pTwoName.appendChild(pTwoNameBold);
 
         for (let row = 0; row < 3; row++) {
+            const gridRow = document.createElement('div');
+            gridRow.classList.add('gridRow');
+            displayGrid.appendChild(gridRow);
             for (let col = 0; col < 3; col++) {
                 const cell = document.createElement('div');
                 cell.classList.add('cellFormat');
                 cell.dataset.row = String(row);
                 cell.dataset.col = String(col);
-                displayGrid.appendChild(cell);
+                gridRow.appendChild(cell);
             }
         }
     } )()
