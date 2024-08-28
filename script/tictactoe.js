@@ -5,13 +5,19 @@ const Gameboard = ( () => {
         ['', '', '']
     ]
 
+    console.table(grid);
+
     function markGrid(mark, row, column) {
         // check if chosen grid is empty
         if (!grid[row][column]) {
             grid[row][column] = mark;
         }
         console.table(grid);
-        winCheck(row, column);
+        const check = winCheck(row, column);
+        if (check) {
+            alert (`${currentPlayer} wins!`)
+            gameWon = true;
+        }
     }
 
     function winCheck(row, column) {
@@ -24,8 +30,7 @@ const Gameboard = ( () => {
             }
         }
         if (win) {
-            alert('Player has won!');
-            return;
+            return true;
         }
 
         win = true;
@@ -37,8 +42,7 @@ const Gameboard = ( () => {
             }
         }
         if (win) {
-            alert('Player has won!');
-            return;
+            return true;
         }
 
         win = true;
@@ -50,10 +54,9 @@ const Gameboard = ( () => {
             }
         }
         if (win) {
-            alert('Player has won!');
-            return;
+            return true;
         }
-        
+
         win = true;
         for (let i = 0; i < 3; i++) {
             if (grid[row][column] !== grid[i][2 - i]) {
@@ -62,8 +65,7 @@ const Gameboard = ( () => {
             }
         }
         if (win) {
-            alert('Player has won!');
-            return;
+            return true;
         }
     }
 
@@ -90,6 +92,7 @@ const Gameboard = ( () => {
         return {
             playerName,
             marker,
+            score,
             addToScore,
             rename,
         }
@@ -121,7 +124,6 @@ const Gameboard = ( () => {
             console.log(randomValue, playerOneMarker);
         }
     
-        let playerTwoMarker;
         switch (playerOneMarker) {
             case 'x':
                 playerTwoMarker = 'o';
@@ -129,17 +131,82 @@ const Gameboard = ( () => {
             case 'o':
                 playerTwoMarker = 'x';
                 break;
+            default:
+                alert('error');
+                break;
         }
         
-        if (! (confirm(`${playerTwoName}'s marker will be ${playerTwoMarker}. Proceed?`))) {
+        if (! (confirm(`${playerTwoName}'s marker will be '${playerTwoMarker}'. Proceed?`))) {
             assign();
         }
     
         return { assign };
     })()
     
-    const PlayerOne = createPlayer(playerOneName, playerOneMarker);
-    const PlayerTwo = createPlayer(playerTwoName, playerTwoMarker);
+    const playerOne = createPlayer(playerOneName, playerOneMarker);
+    const playerTwo = createPlayer(playerTwoName, playerTwoMarker);
+
+    let currentPlayer;
+    let currentPlayerMarker;
+
+    const randomValue = Math.random() * 2
+    if (randomValue > 1) {
+        currentPlayer = playerTwo.playerName;
+        currentPlayerMarker = playerTwo.marker;
+        alert(`${playerTwo.playerName} starts first!`);
+    } else {
+        currentPlayer = playerOne.playerName;
+        currentPlayerMarker = playerOne.marker;
+        alert(`${playerOne.playerName} starts first!`);
+    }
+
+    function switchPlayers() {
+        switch (currentPlayer) {
+            case playerOne.playerName:
+                currentPlayer = playerTwo.playerName;
+                currentPlayerMarker = playerTwo.marker;
+                break;
+            case playerTwo.playerName:
+                currentPlayer = playerOne.playerName;
+                currentPlayerMarker = playerOne.marker;
+                break;
+        }
+    }
+
+    let colChoice;
+    let rowChoice;
+    function makeChoice() {
+        alert (`Its currently ${currentPlayer}'s turn!`)
+        rowChoice = prompt(`Select a row (1-3)`);
+        while ( (rowChoice < 1) || (rowChoice > 3) ) {
+            rowChoice = prompt('Please select a valid row! (1-3)');
+        }
+        // Because array indexes begin at 0
+        rowChoice--;
+
+        colChoice = prompt(`Select a column (1-3)`);
+        while ( (colChoice < 1) || (colChoice > 3) ) {
+            colChoice= prompt('Please select a valid column! (1-3)');
+        }
+        colChoice--;
+    }
+    
+    let gameWon;
+    const playGame = (function start() {
+        gameWon = false;
+        while (!(gameWon)) {
+            makeChoice();
+            markGrid(currentPlayerMarker, rowChoice, colChoice);
+            alert(`
+                ${grid[0]}
+                ${grid[1]}
+                ${grid[2]}`)
+            switchPlayers();
+        }
+
+        return { start };
+    })()
+
 
     return {
         grid,
