@@ -207,6 +207,40 @@ const Gameboard = ( () => {
         return { start };
     })()
 
+    const initUI = ( () => {
+        const displayGrid = document.querySelector('.displayGrid');
+
+        const pOneName = document.querySelector('.playerOneName');
+        const pOneNameBold = document.createElement('b');
+        const pOneMarker = document.querySelector('.playerOneMarker');
+        const pOneScore = document.querySelector('.playerOneScore');
+
+        const pTwoName = document.querySelector('.playerTwoName');
+        const pTwoNameBold = document.createElement('b');
+        const pTwoMarker = document.querySelector('.playerTwoMarker');
+        const pTwoScore = document.querySelector('.playerTwoScore');
+
+        pOneNameBold.textContent = playerOne.playerName;
+        pOneMarker.textContent += playerOne.marker;
+        pOneScore.textContent += playerOne.score;
+
+        pTwoNameBold.textContent = playerTwo.playerName;
+        pTwoMarker.textContent += playerTwo.marker;
+        pTwoScore.textContent += playerTwo.score;
+
+        pOneName.appendChild(pOneNameBold);
+        pTwoName.appendChild(pTwoNameBold);
+
+        for (let row = 0; row < 3; row++) {
+            for (let col = 0; col < 3; col++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cellFormat');
+                cell.dataset.row = String(row);
+                cell.dataset.col = String(col);
+                displayGrid.appendChild(cell);
+            }
+        }
+    } )()
 
     return {
         grid,
