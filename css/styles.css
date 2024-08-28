@@ -1,0 +1,27 @@
+body,
+.gridRow {
+    display: flex;
+}
+
+body {
+    justify-content: center;
+    align-items: center;
+
+    height: 95vh;
+    min-height: 500px;
+
+    gap: 50px;
+}
+
+.gridRow + .gridRow {
+    border-top: 5px solid black;
+}
+
+.gridRow > div {
+    width: 150px;
+    height: 150px;
+}
+
+.gridRow > div + div {
+    border-left: 5px solid black;
+}
