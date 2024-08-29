@@ -5,17 +5,13 @@ const Gameboard = ( () => {
         ['', '', '']
     ]
 
-    console.table(grid);
-
     function markGrid(mark, row, column) {
         // check if chosen grid is empty
         if (!grid[row][column]) {
             grid[row][column] = mark;
         }
-        console.table(grid);
         const check = winCheck(row, column);
         if (check) {
-            alert (`${currentPlayer} wins!`)
             gameWon = true;
         }
     }
@@ -111,17 +107,19 @@ const Gameboard = ( () => {
 
     let currentPlayer;
     let currentPlayerMarker;
+    const currentTurnDisplay = document.querySelector('.currentTurnDisplay');
 
-    // const randomValue = Math.random() * 2
-    // if (randomValue > 1) {
-    //     currentPlayer = playerTwo.playerName;
-    //     currentPlayerMarker = playerTwo.marker;
-    //     alert(`${playerTwo.playerName} starts first!`);
-    // } else {
-    //     currentPlayer = playerOne.playerName;
-    //     currentPlayerMarker = playerOne.marker;
-    //     alert(`${playerOne.playerName} starts first!`);
-    // }
+    function decideFirstPlayer() {
+        const randomValue = Math.random() * 2
+        if (randomValue > 1) {
+            currentPlayer = playerTwo.playerName;
+            currentPlayerMarker = playerTwo.marker;
+        } else {
+            currentPlayer = playerOne.playerName;
+            currentPlayerMarker = playerOne.marker;
+        }
+        currentTurnDisplay.textContent = `${currentPlayer} (${currentPlayerMarker}) starts the game!`;
+    }
 
     // function switchPlayers() {
     //     switch (currentPlayer) {
@@ -156,6 +154,8 @@ const Gameboard = ( () => {
     
     playerOne = createPlayer('Player 1', 'Click to choose marker');
     playerTwo = createPlayer('Player 2', 'Click to choose marker');
+
+    let gameInProgress = false;
 
     const ui = ( function refresh() {
         const displayGrid = document.querySelector('.displayGrid');
@@ -228,11 +228,16 @@ const Gameboard = ( () => {
         buttonChoices.appendChild(buttonRand);
 
         [pOneMarkerChoice, pTwoMarkerChoice].forEach( (markerEle) => {
-            markerEle.addEventListener('click', () => {
-                const parentEle = markerEle.parentNode;
+                markerEle.addEventListener('click', () => {
+                    if (gameInProgress) {
+                        alert('Cannot change marker as game in progress!');
+                        return;
+                    }
 
-                [buttonO, buttonX, buttonRand].forEach( (btn) => {
-                    btn.addEventListener('click', function decide() {
+                    const parentEle = markerEle.parentNode;
+
+                    [buttonO, buttonX, buttonRand].forEach( (btn) => {
+                        btn.addEventListener('click', function decide() {
                         pOneMarkerChoice.textContent = '';
                         pTwoMarkerChoice.textContent = '';
 
@@ -254,6 +259,7 @@ const Gameboard = ( () => {
                         pOneMarkerChoice.textContent = playerOne.marker;
                         pTwoMarkerChoice.textContent = playerTwo.marker;
 
+                        // To minimise memory leaks
                         buttonChoices.removeEventListener('click', decide);
                         buttonChoices.remove();
                     });
@@ -284,6 +290,26 @@ const Gameboard = ( () => {
 
         return { refresh };
     } )()
+
+    function playersCheck() {
+        if (
+            ((playerOne.marker === 'X') && (playerTwo.marker === 'O'))
+            || ((playerOne.marker === 'O') && (playerTwo.marker === 'X')) 
+        )   { 
+            return true;
+        } else {
+            return false;
+            };
+    }
+
+    const startBtn = document.querySelector('.startBtn')
+    startBtn.addEventListener('click', () => {
+        if (playersCheck()) {
+            gameInProgress = true;
+            startBtn.disabled = true;
+            decideFirstPlayer();
+        }
+    })
 
     return {
         grid,
