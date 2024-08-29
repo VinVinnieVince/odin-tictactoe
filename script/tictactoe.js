@@ -121,36 +121,19 @@ const Gameboard = ( () => {
         currentTurnDisplay.textContent = `${currentPlayer} (${currentPlayerMarker}) starts the game!`;
     }
 
-    // function switchPlayers() {
-    //     switch (currentPlayer) {
-    //         case playerOne.playerName:
-    //             currentPlayer = playerTwo.playerName;
-    //             currentPlayerMarker = playerTwo.marker;
-    //             break;
-    //         case playerTwo.playerName:
-    //             currentPlayer = playerOne.playerName;
-    //             currentPlayerMarker = playerOne.marker;
-    //             break;
-    //     }
-    // }
-
-    // let colChoice;
-    // let rowChoice;
-    // function makeChoice() {
-    //     alert (`Its currently ${currentPlayer}'s turn!`)
-    //     rowChoice = prompt(`Select a row (1-3)`);
-    //     while ( (rowChoice < 1) || (rowChoice > 3) ) {
-    //         rowChoice = prompt('Please select a valid row! (1-3)');
-    //     }
-    //     // Because array indexes begin at 0
-    //     rowChoice--;
-
-    //     colChoice = prompt(`Select a column (1-3)`);
-    //     while ( (colChoice < 1) || (colChoice > 3) ) {
-    //         colChoice= prompt('Please select a valid column! (1-3)');
-    //     }
-    //     colChoice--;
-    // }
+    function switchPlayers() {
+        switch (currentPlayer) {
+            case playerOne.playerName:
+                currentPlayer = playerTwo.playerName;
+                currentPlayerMarker = playerTwo.marker;
+                break;
+            case playerTwo.playerName:
+                currentPlayer = playerOne.playerName;
+                currentPlayerMarker = playerOne.marker;
+                break;
+        }
+        currentTurnDisplay.textContent = `It is currently ${currentPlayer} (${currentPlayerMarker})'s turn!`
+    }
     
     playerOne = createPlayer('Player 1', 'Click to choose marker');
     playerTwo = createPlayer('Player 2', 'Click to choose marker');
@@ -285,6 +268,14 @@ const Gameboard = ( () => {
                 cell.dataset.row = String(row);
                 cell.dataset.col = String(col);
                 gridRow.appendChild(cell);
+
+                cell.addEventListener('click', () => {
+                    if (gameInProgress && !cell.textContent) {
+                        cell.textContent = currentPlayerMarker;
+                        markGrid(currentPlayerMarker, row, col);
+                        switchPlayers();
+                    }
+                })
             }
         }
 
