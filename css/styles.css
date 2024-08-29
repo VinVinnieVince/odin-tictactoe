@@ -1,16 +1,27 @@
 body,
+.mainContainer,
+.displayGrid,
 .gridRow {
-    display: flex;
+    display: grid;
 }
 
 body {
-    justify-content: center;
-    align-items: center;
+    grid-template-rows: repeat(3, auto);
 
     height: 95vh;
     min-height: 500px;
 
+    justify-items: center;
+    align-content: center;
+
     gap: 50px;
+}
+
+.mainContainer {
+    grid-template-columns: 300px max-content 300px;
+
+    justify-items: center;
+    align-items: center;
 }
 
 .playerOneName,
@@ -23,6 +34,14 @@ body {
     margin-top: 0;
 
     font-size: 14px;
+}
+
+.displayGrid {
+    grid-template-rows: repeat(3, 150px);
+}
+
+.gridRow {
+    grid-template-columns: repeat(3, 150px);
 }
 
 .gridRow + .gridRow {
