@@ -98,114 +98,64 @@ const Gameboard = ( () => {
         }
     }
     
-    let playerOneName = prompt('Write a name for Player 1', 'Player 1');
-    let playerTwoName = prompt('Write a name for Player 2', 'Player 2');
-    
-    let playerOneMarker;
-    let playerTwoMarker;
-    const PlayerMarkers = (function assign() {
-        playerOneMarker = prompt(`X or O? (Type 'rand' for random)`);
-    
-        const acceptedInputs = ['x', 'o', 'rand'];
-    
-        while ( !(acceptedInputs.includes(playerOneMarker.toLowerCase())) ) {
-            playerOneMarker = prompt(`Please type in 'x', 'o' or 'rand'!`);
+    function randomChoice() {
+        const randomValue = Math.random() * 2
+        if (randomValue < 1) {
+            return 'O';
+        } else if (randomValue >= 1) {
+            return 'X';
+        } else {
+            console.log('random value error');
         }
-    
-        if (playerOneMarker === 'rand') {
-            const randomValue = Math.random() * 2;
-            if (randomValue <= 1) {
-                playerOneMarker = 'o';
-            } else if (randomValue > 1) {
-                playerOneMarker = 'x';
-            } else {
-                console.log('random marker error');
-            }
-            console.log(randomValue, playerOneMarker);
-        }
-    
-        switch (playerOneMarker) {
-            case 'x':
-                playerTwoMarker = 'o';
-                break;
-            case 'o':
-                playerTwoMarker = 'x';
-                break;
-            default:
-                alert('error');
-                break;
-        }
-        
-        if (! (confirm(`${playerTwoName}'s marker will be '${playerTwoMarker}'. Proceed?`))) {
-            assign();
-        }
-    
-        return { assign };
-    })()
-    
-    const playerOne = createPlayer(playerOneName, playerOneMarker);
-    const playerTwo = createPlayer(playerTwoName, playerTwoMarker);
+    }
 
     let currentPlayer;
     let currentPlayerMarker;
 
-    const randomValue = Math.random() * 2
-    if (randomValue > 1) {
-        currentPlayer = playerTwo.playerName;
-        currentPlayerMarker = playerTwo.marker;
-        alert(`${playerTwo.playerName} starts first!`);
-    } else {
-        currentPlayer = playerOne.playerName;
-        currentPlayerMarker = playerOne.marker;
-        alert(`${playerOne.playerName} starts first!`);
-    }
+    // const randomValue = Math.random() * 2
+    // if (randomValue > 1) {
+    //     currentPlayer = playerTwo.playerName;
+    //     currentPlayerMarker = playerTwo.marker;
+    //     alert(`${playerTwo.playerName} starts first!`);
+    // } else {
+    //     currentPlayer = playerOne.playerName;
+    //     currentPlayerMarker = playerOne.marker;
+    //     alert(`${playerOne.playerName} starts first!`);
+    // }
 
-    function switchPlayers() {
-        switch (currentPlayer) {
-            case playerOne.playerName:
-                currentPlayer = playerTwo.playerName;
-                currentPlayerMarker = playerTwo.marker;
-                break;
-            case playerTwo.playerName:
-                currentPlayer = playerOne.playerName;
-                currentPlayerMarker = playerOne.marker;
-                break;
-        }
-    }
+    // function switchPlayers() {
+    //     switch (currentPlayer) {
+    //         case playerOne.playerName:
+    //             currentPlayer = playerTwo.playerName;
+    //             currentPlayerMarker = playerTwo.marker;
+    //             break;
+    //         case playerTwo.playerName:
+    //             currentPlayer = playerOne.playerName;
+    //             currentPlayerMarker = playerOne.marker;
+    //             break;
+    //     }
+    // }
 
-    let colChoice;
-    let rowChoice;
-    function makeChoice() {
-        alert (`Its currently ${currentPlayer}'s turn!`)
-        rowChoice = prompt(`Select a row (1-3)`);
-        while ( (rowChoice < 1) || (rowChoice > 3) ) {
-            rowChoice = prompt('Please select a valid row! (1-3)');
-        }
-        // Because array indexes begin at 0
-        rowChoice--;
+    // let colChoice;
+    // let rowChoice;
+    // function makeChoice() {
+    //     alert (`Its currently ${currentPlayer}'s turn!`)
+    //     rowChoice = prompt(`Select a row (1-3)`);
+    //     while ( (rowChoice < 1) || (rowChoice > 3) ) {
+    //         rowChoice = prompt('Please select a valid row! (1-3)');
+    //     }
+    //     // Because array indexes begin at 0
+    //     rowChoice--;
 
-        colChoice = prompt(`Select a column (1-3)`);
-        while ( (colChoice < 1) || (colChoice > 3) ) {
-            colChoice= prompt('Please select a valid column! (1-3)');
-        }
-        colChoice--;
-    }
+    //     colChoice = prompt(`Select a column (1-3)`);
+    //     while ( (colChoice < 1) || (colChoice > 3) ) {
+    //         colChoice= prompt('Please select a valid column! (1-3)');
+    //     }
+    //     colChoice--;
+    // }
     
-    let gameWon;
-    const playGame = (function start() {
-        gameWon = false;
-        while (!(gameWon)) {
-            makeChoice();
-            markGrid(currentPlayerMarker, rowChoice, colChoice);
-            alert(`
-                ${grid[0]}
-                ${grid[1]}
-                ${grid[2]}`)
-            switchPlayers();
-        }
-
-        return { start };
-    })()
+    playerOne = createPlayer('Player 1', 'Click to choose marker');
+    playerTwo = createPlayer('Player 2', 'Click to choose marker');
 
     const ui = ( function refresh() {
         const displayGrid = document.querySelector('.displayGrid');
@@ -213,19 +163,21 @@ const Gameboard = ( () => {
         const pOneName = document.querySelector('.playerOneName');
         const pOneNameBold = document.createElement('b');
         const pOneMarker = document.querySelector('.playerOneMarker');
+        const pOneMarkerChoice = document.createElement('p');
         const pOneScore = document.querySelector('.playerOneScore');
 
         const pTwoName = document.querySelector('.playerTwoName');
         const pTwoNameBold = document.createElement('b');
         const pTwoMarker = document.querySelector('.playerTwoMarker');
+        const pTwoMarkerChoice = document.createElement('p');
         const pTwoScore = document.querySelector('.playerTwoScore');
 
         pOneNameBold.textContent = playerOne.playerName;
-        pOneMarker.textContent += playerOne.marker;
+        pOneMarkerChoice.textContent = playerOne.marker;
         pOneScore.textContent += playerOne.score;
 
         pTwoNameBold.textContent = playerTwo.playerName;
-        pTwoMarker.textContent += playerTwo.marker;
+        pTwoMarkerChoice.textContent = playerTwo.marker;
         pTwoScore.textContent += playerTwo.score;
 
         [pOneNameBold, pTwoNameBold].forEach( (ele) => {
@@ -247,6 +199,10 @@ const Gameboard = ( () => {
                     nameBold.textContent = nameForm.value;
 
                     ele.appendChild(nameBold);
+
+                    playerOne.name = pOneNameBold.textContent; 
+                    playerTwo.name = pTwoNameBold.textContent;
+
                     // Attempt to minimise memory leaks
                     nameForm.removeEventListener('focusout', edit);
                     nameForm.remove();
@@ -256,10 +212,62 @@ const Gameboard = ( () => {
                 parentEle.appendChild(nameForm);
                 nameForm.focus();
             });
-        }) 
+        });
+
+        const buttonChoices = document.createElement('div');
+        const buttonO = document.createElement('button');
+        const buttonX = document.createElement('button');
+        const buttonRand = document.createElement('button');
+
+        buttonO.textContent = 'O';
+        buttonX.textContent = 'X';
+        buttonRand.textContent = 'Random';
+
+        buttonChoices.appendChild(buttonO);
+        buttonChoices.appendChild(buttonX);
+        buttonChoices.appendChild(buttonRand);
+
+        [pOneMarkerChoice, pTwoMarkerChoice].forEach( (markerEle) => {
+            markerEle.addEventListener('click', () => {
+                const parentEle = markerEle.parentNode;
+
+                [buttonO, buttonX, buttonRand].forEach( (btn) => {
+                    btn.addEventListener('click', function decide() {
+                        pOneMarkerChoice.textContent = '';
+                        pTwoMarkerChoice.textContent = '';
+
+                        if (btn.textContent === 'Random') {
+                            markerEle.textContent = randomChoice();
+                        } else {
+                            markerEle.textContent = btn.textContent;
+                        }
+
+                        // auto-assigns other player's marker
+                        if ((pOneMarkerChoice.textContent === 'X') || (pTwoMarkerChoice.textContent === 'O')) {
+                            playerOne.marker = 'X';
+                            playerTwo.marker = 'O';
+                        } else if ((pOneMarkerChoice.textContent === 'O') || (pTwoMarkerChoice.textContent === 'X')) {
+                            playerOne.marker = 'O';
+                            playerTwo.marker = 'X';
+                        }
+
+                        pOneMarkerChoice.textContent = playerOne.marker;
+                        pTwoMarkerChoice.textContent = playerTwo.marker;
+
+                        buttonChoices.removeEventListener('click', decide);
+                        buttonChoices.remove();
+                    });
+                });
+
+                markerEle.textContent = '';
+                parentEle.appendChild(buttonChoices);
+            });
+        })
 
         pOneName.appendChild(pOneNameBold);
         pTwoName.appendChild(pTwoNameBold);
+        pOneMarker.appendChild(pOneMarkerChoice);
+        pTwoMarker.appendChild(pTwoMarkerChoice);
 
         for (let row = 0; row < 3; row++) {
             const gridRow = document.createElement('div');
