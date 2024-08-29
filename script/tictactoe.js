@@ -207,7 +207,7 @@ const Gameboard = ( () => {
         return { start };
     })()
 
-    const initUI = ( () => {
+    const ui = ( function refresh() {
         const displayGrid = document.querySelector('.displayGrid');
 
         const pOneName = document.querySelector('.playerOneName');
@@ -228,6 +228,36 @@ const Gameboard = ( () => {
         pTwoMarker.textContent += playerTwo.marker;
         pTwoScore.textContent += playerTwo.score;
 
+        [pOneNameBold, pTwoNameBold].forEach( (ele) => {
+            ele.addEventListener('click', () => {
+                const nameForm = document.createElement('input');
+                const parentEle = ele.parentNode;
+                const currentName = ele.textContent 
+
+                nameForm.value = currentName;
+
+                nameForm.addEventListener('focusout', function edit() {
+                    const nameBold = document.createElement('b');
+
+                    // For blank inputs, don't change name
+                    if (!nameForm.value) {
+                        nameForm.value = currentName;
+                    }
+
+                    nameBold.textContent = nameForm.value;
+
+                    ele.appendChild(nameBold);
+                    // Attempt to minimise memory leaks
+                    nameForm.removeEventListener('focusout', edit);
+                    nameForm.remove();
+                })
+
+                ele.textContent = '';
+                parentEle.appendChild(nameForm);
+                nameForm.focus();
+            });
+        }) 
+
         pOneName.appendChild(pOneNameBold);
         pTwoName.appendChild(pTwoNameBold);
 
@@ -243,6 +273,8 @@ const Gameboard = ( () => {
                 gridRow.appendChild(cell);
             }
         }
+
+        return { refresh };
     } )()
 
     return {
