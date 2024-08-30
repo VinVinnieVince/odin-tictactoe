@@ -347,6 +347,8 @@ const Gameboard = ( () => {
             gameInProgress = true;
             decideFirstPlayer();
             startBtn.disabled = true;
+        } else {
+            displayText.textContent = 'Please choose player markers!'
         }
     }
 
