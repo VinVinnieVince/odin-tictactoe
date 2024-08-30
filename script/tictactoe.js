@@ -107,7 +107,7 @@ const Gameboard = ( () => {
 
     let currentPlayer;
     let currentPlayerMarker;
-    const currentTurnDisplay = document.querySelector('.currentTurnDisplay');
+    let displayText = document.querySelector('.displayText');
 
     function decideFirstPlayer() {
         const randomValue = Math.random() * 2
@@ -118,7 +118,7 @@ const Gameboard = ( () => {
             currentPlayer = playerOne.playerName;
             currentPlayerMarker = playerOne.marker;
         }
-        currentTurnDisplay.textContent = `${currentPlayer} (${currentPlayerMarker}) starts the game!`;
+        displayText.textContent = `${currentPlayer} (${currentPlayerMarker}) starts the game!`;
     }
 
     function switchPlayers() {
@@ -132,7 +132,7 @@ const Gameboard = ( () => {
                 currentPlayerMarker = playerOne.marker;
                 break;
         }
-        currentTurnDisplay.textContent = `It is currently ${currentPlayer} (${currentPlayerMarker})'s turn!`
+        displayText.textContent = `It is currently ${currentPlayer} (${currentPlayerMarker})'s turn!`
     }
     
     playerOne = createPlayer('Player 1', 'Click to choose marker');
