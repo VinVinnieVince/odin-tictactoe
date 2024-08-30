@@ -151,7 +151,7 @@ const Gameboard = ( () => {
 
     let gameInProgress = false;
 
-    const ui = ( function refresh() {
+    const ui = ( () => {
         const displayGrid = document.querySelector('.displayGrid');
 
         const pOneName = document.querySelector('.playerOneName');
@@ -310,7 +310,7 @@ const Gameboard = ( () => {
             }
         }
 
-        return { pOneScore, pTwoScore, refresh };
+        return { pOneScore, pTwoScore };
     } )()
 
     function playersCheck() {
