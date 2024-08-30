@@ -157,21 +157,19 @@ const Gameboard = ( () => {
         const pOneName = document.querySelector('.playerOneName');
         const pOneNameBold = document.createElement('b');
         const pOneMarker = document.querySelector('.playerOneMarker');
-        const pOneMarkerChoice = document.createElement('p');
         const pOneScore = document.querySelector('.playerOneScore');
 
         const pTwoName = document.querySelector('.playerTwoName');
         const pTwoNameBold = document.createElement('b');
         const pTwoMarker = document.querySelector('.playerTwoMarker');
-        const pTwoMarkerChoice = document.createElement('p');
         const pTwoScore = document.querySelector('.playerTwoScore');
 
         pOneNameBold.textContent = playerOne.playerName;
-        pOneMarkerChoice.textContent = playerOne.marker;
+        pOneMarker.textContent += playerOne.marker;
         pOneScore.textContent += playerOne.score;
 
         pTwoNameBold.textContent = playerTwo.playerName;
-        pTwoMarkerChoice.textContent = playerTwo.marker;
+        pTwoMarker.textContent += playerTwo.marker;
         pTwoScore.textContent += playerTwo.score;
 
         [pOneNameBold, pTwoNameBold].forEach( (ele) => {
@@ -221,19 +219,17 @@ const Gameboard = ( () => {
         buttonChoices.appendChild(buttonX);
         buttonChoices.appendChild(buttonRand);
 
-        [pOneMarkerChoice, pTwoMarkerChoice].forEach( (markerEle) => {
+        [pOneMarker, pTwoMarker].forEach( (markerEle) => {
                 markerEle.addEventListener('click', () => {
                     if (gameInProgress) {
                         alert('Cannot change marker as game in progress!');
                         return;
                     }
 
-                    const parentEle = markerEle.parentNode;
-
                     [buttonO, buttonX, buttonRand].forEach( (btn) => {
                         btn.addEventListener('click', function decide() {
-                        pOneMarkerChoice.textContent = '';
-                        pTwoMarkerChoice.textContent = '';
+                        pOneMarker.textContent = '';
+                        pTwoMarker.textContent = '';
 
                         if (btn.textContent === 'Random') {
                             markerEle.textContent = randomChoice();
@@ -242,32 +238,32 @@ const Gameboard = ( () => {
                         }
 
                         // auto-assigns other player's marker
-                        if ((pOneMarkerChoice.textContent === 'X') || (pTwoMarkerChoice.textContent === 'O')) {
+                        if ((pOneMarker.textContent === 'X') || (pTwoMarker.textContent === 'O')) {
                             playerOne.marker = 'X';
                             playerTwo.marker = 'O';
-                        } else if ((pOneMarkerChoice.textContent === 'O') || (pTwoMarkerChoice.textContent === 'X')) {
+                        } else if ((pOneMarker.textContent === 'O') || (pTwoMarker.textContent === 'X')) {
                             playerOne.marker = 'O';
                             playerTwo.marker = 'X';
                         }
 
-                        pOneMarkerChoice.textContent = playerOne.marker;
-                        pTwoMarkerChoice.textContent = playerTwo.marker;
+                        // updates both markers
+                        pOneMarker.textContent = `Marker: ` + playerOne.marker;
+                        pTwoMarker.textContent = `Marker: ` + playerTwo.marker;
 
                         // To minimise memory leaks
                         buttonChoices.removeEventListener('click', decide);
                         buttonChoices.remove();
                     });
-                });
 
-                markerEle.textContent = '';
-                parentEle.appendChild(buttonChoices);
+                // Although function is insert *before*, this will allow buttonChoices to be inserted *after* marker div
+                markerEle.parentNode.insertBefore(buttonChoices, markerEle.nextSibling);
+
+                });
             });
         })
 
         pOneName.appendChild(pOneNameBold);
         pTwoName.appendChild(pTwoNameBold);
-        pOneMarker.appendChild(pOneMarkerChoice);
-        pTwoMarker.appendChild(pTwoMarkerChoice);
 
         for (let row = 0; row < 3; row++) {
             const gridRow = document.createElement('div');
