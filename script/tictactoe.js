@@ -105,6 +105,8 @@ const Gameboard = ( () => {
             rename,
         }
     }
+    playerOne = createPlayer('Player 1', 'Click to choose marker');
+    playerTwo = createPlayer('Player 2', 'Click to choose marker');
     
     function randomChoice() {
         const randomValue = Math.random() * 2
@@ -146,9 +148,6 @@ const Gameboard = ( () => {
         }
         displayText.textContent = `It is currently ${currentPlayer} (${currentPlayerMarker})'s turn!`
     }
-    
-    playerOne = createPlayer('Player 1', 'Click to choose marker');
-    playerTwo = createPlayer('Player 2', 'Click to choose marker');
 
     let gameInProgress = false;
 
