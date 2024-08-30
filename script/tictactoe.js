@@ -194,8 +194,8 @@ const Gameboard = ( () => {
 
                     ele.appendChild(nameBold);
 
-                    playerOne.name = pOneNameBold.textContent; 
-                    playerTwo.name = pTwoNameBold.textContent;
+                    playerOne.playerName = pOneNameBold.textContent; 
+                    playerTwo.playerName = pTwoNameBold.textContent;
 
                     // Attempt to minimise memory leaks
                     nameForm.removeEventListener('focusout', edit);
