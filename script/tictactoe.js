@@ -10,10 +10,6 @@ const Gameboard = ( () => {
         if (!grid[row][column]) {
             grid[row][column] = mark;
         }
-        const check = winCheck(row, column);
-        if (check) {
-            gameWon = true;
-        }
     }
 
     function winCheck(row, column) {
@@ -82,14 +78,19 @@ const Gameboard = ( () => {
                 grid[row][column] = '';
             }
         }
+
+        const allCells = document.querySelectorAll('.cellFormat');
+        for (cell in allCells) {
+            allCells[cell].textContent = '';
+        }
     }
 
     function createPlayer (name, marker) {
-        const score = 0;
+        let score = 0;
         let playerName = name;
     
         function addToScore () {
-            score++;
+            this.score++;
         }
 
         function rename () {
@@ -284,13 +285,20 @@ const Gameboard = ( () => {
                     if (gameInProgress && !cell.textContent) {
                         cell.textContent = currentPlayerMarker;
                         markGrid(currentPlayerMarker, row, col);
+
+                        const playerWon = winCheck(row, col);
+                        console.log(playerWon);
+                        if (playerWon || noMoreMoves()) {
+                            endGame(playerWon);
+                            return;
+                        };
                         switchPlayers();
                     }
                 })
             }
         }
 
-        return { refresh };
+        return { pOneScore, pTwoScore, refresh };
     } )()
 
     function playersCheck() {
@@ -304,8 +312,28 @@ const Gameboard = ( () => {
             };
     }
 
+    function endGame(playerWon) {
+        if (playerWon) {
+            displayText.textContent = `${currentPlayer} has won!`;
+            if (currentPlayer === playerOne.playerName) {
+                playerOne.addToScore();
+                console.log(playerOne.score);
+                ui.pOneScore.textContent = `Score: ${playerOne.score}`; 
+            } else if (currentPlayer === playerTwo.playerName) {
+                playerTwo.addToScore();
+                console.log(playerTwo.score);
+                ui.pTwoScore.textContent = `Score: ${playerTwo.score}`;
+            }
+        } else {
+            displayText.textContent = `Draw!`
+        }
+        gameInProgress = false;
+        startBtn.disabled = false;
+    }
+
     const startBtn = document.querySelector('.startBtn')
     startBtn.addEventListener('click', () => {
+        reset();
         if (playersCheck()) {
             gameInProgress = true;
             startBtn.disabled = true;
