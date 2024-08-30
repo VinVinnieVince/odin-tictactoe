@@ -287,7 +287,6 @@ const Gameboard = ( () => {
                         markGrid(currentPlayerMarker, row, col);
 
                         const playerWon = winCheck(row, col);
-                        console.log(playerWon);
                         if (playerWon || noMoreMoves()) {
                             endGame(playerWon);
                             return;
@@ -317,11 +316,9 @@ const Gameboard = ( () => {
             displayText.textContent = `${currentPlayer} has won!`;
             if (currentPlayer === playerOne.playerName) {
                 playerOne.addToScore();
-                console.log(playerOne.score);
                 ui.pOneScore.textContent = `Score: ${playerOne.score}`; 
             } else if (currentPlayer === playerTwo.playerName) {
                 playerTwo.addToScore();
-                console.log(playerTwo.score);
                 ui.pTwoScore.textContent = `Score: ${playerTwo.score}`;
             }
         } else {
