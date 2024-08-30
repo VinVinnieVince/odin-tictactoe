@@ -62,8 +62,8 @@ const Gameboard = ( () => {
     }
 
     function noMoreMoves() {
-        for (row in grid) {
-            for (col in row) {
+        for (let row = 0; row < 3; row ++) {
+            for (let col = 0; col < 3; col ++) {
                 if (!grid[row][col]) {
                     return false;
                 }
