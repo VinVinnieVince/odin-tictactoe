@@ -337,10 +337,4 @@ const Gameboard = ( () => {
             decideFirstPlayer();
         }
     })
-
-    return {
-        grid,
-        markGrid,
-        reset,
-    }
 })() 
