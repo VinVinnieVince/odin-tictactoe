@@ -172,37 +172,48 @@ const Gameboard = ( () => {
         pTwoMarker.textContent += playerTwo.marker;
         pTwoScore.textContent += playerTwo.score;
 
+        pOneName.appendChild(pOneNameBold);
+        pTwoName.appendChild(pTwoNameBold);
+
+        function addNameForm(ele) {
+            const nameForm = document.createElement('input');
+            const parentEle = ele.parentNode;
+            const currentName = ele.textContent 
+
+            nameForm.value = currentName;
+
+            nameForm.addEventListener('focusout', () => {
+                nameEdit(ele, nameForm, currentName);
+            })
+
+            ele.textContent = '';
+            parentEle.appendChild(nameForm);
+            nameForm.focus();
+        }
+
+        function nameEdit(ele, nameForm, currentName) {
+            const nameBold = document.createElement('b');
+
+            // For blank inputs, don't change name
+            if (!nameForm.value) {
+                nameForm.value = currentName;
+            }
+
+            nameBold.textContent = nameForm.value;
+
+            ele.appendChild(nameBold);
+
+            playerOne.playerName = pOneNameBold.textContent; 
+            playerTwo.playerName = pTwoNameBold.textContent;
+
+            // Attempt to minimise memory leaks
+            nameForm.removeEventListener('focusout', nameEdit);
+            nameForm.remove();
+        }
+
         [pOneNameBold, pTwoNameBold].forEach( (ele) => {
             ele.addEventListener('click', () => {
-                const nameForm = document.createElement('input');
-                const parentEle = ele.parentNode;
-                const currentName = ele.textContent 
-
-                nameForm.value = currentName;
-
-                nameForm.addEventListener('focusout', function edit() {
-                    const nameBold = document.createElement('b');
-
-                    // For blank inputs, don't change name
-                    if (!nameForm.value) {
-                        nameForm.value = currentName;
-                    }
-
-                    nameBold.textContent = nameForm.value;
-
-                    ele.appendChild(nameBold);
-
-                    playerOne.playerName = pOneNameBold.textContent; 
-                    playerTwo.playerName = pTwoNameBold.textContent;
-
-                    // Attempt to minimise memory leaks
-                    nameForm.removeEventListener('focusout', edit);
-                    nameForm.remove();
-                })
-
-                ele.textContent = '';
-                parentEle.appendChild(nameForm);
-                nameForm.focus();
+                addNameForm(ele);
             });
         });
 
@@ -219,51 +230,69 @@ const Gameboard = ( () => {
         buttonChoices.appendChild(buttonX);
         buttonChoices.appendChild(buttonRand);
 
-        [pOneMarker, pTwoMarker].forEach( (markerEle) => {
-                markerEle.addEventListener('click', () => {
-                    if (gameInProgress) {
-                        alert('Cannot change marker as game in progress!');
-                        return;
-                    }
+        function addMarkerChoices (ele) {
+            if (gameInProgress) {
+                alert('Cannot change marker as game in progress!');
+                return;
+            }
 
-                    [buttonO, buttonX, buttonRand].forEach( (btn) => {
-                        btn.addEventListener('click', function decide() {
-                        pOneMarker.textContent = '';
-                        pTwoMarker.textContent = '';
+            [buttonO, buttonX, buttonRand].forEach( (btn) => {
+                btn.addEventListener('click', () => {
+                    assignMarkers(btn, ele);
+                })
+            })
 
-                        if (btn.textContent === 'Random') {
-                            markerEle.textContent = randomChoice();
-                        } else {
-                            markerEle.textContent = btn.textContent;
-                        }
+            // Although function is insert *before*, this will allow buttonChoices to be inserted *after* marker div
+            ele.parentNode.insertBefore(buttonChoices, ele.nextSibling);
+        }
 
-                        // auto-assigns other player's marker
-                        if ((pOneMarker.textContent === 'X') || (pTwoMarker.textContent === 'O')) {
-                            playerOne.marker = 'X';
-                            playerTwo.marker = 'O';
-                        } else if ((pOneMarker.textContent === 'O') || (pTwoMarker.textContent === 'X')) {
-                            playerOne.marker = 'O';
-                            playerTwo.marker = 'X';
-                        }
+        function assignMarkers (btn, ele) {
+            pOneMarker.textContent = '';
+            pTwoMarker.textContent = '';
 
-                        // updates both markers
-                        pOneMarker.textContent = `Marker: ` + playerOne.marker;
-                        pTwoMarker.textContent = `Marker: ` + playerTwo.marker;
+            if (btn.textContent === 'Random') {
+                ele.textContent = randomChoice();
+            } else {
+                ele.textContent = btn.textContent;
+            }
 
-                        // To minimise memory leaks
-                        buttonChoices.removeEventListener('click', decide);
-                        buttonChoices.remove();
-                    });
+            // auto-assigns other player's marker
+            if ((pOneMarker.textContent === 'X') || (pTwoMarker.textContent === 'O')) {
+                playerOne.marker = 'X';
+                playerTwo.marker = 'O';
+            } else if ((pOneMarker.textContent === 'O') || (pTwoMarker.textContent === 'X')) {
+                playerOne.marker = 'O';
+                playerTwo.marker = 'X';
+            }
 
-                // Although function is insert *before*, this will allow buttonChoices to be inserted *after* marker div
-                markerEle.parentNode.insertBefore(buttonChoices, markerEle.nextSibling);
+            // updates both markers
+            pOneMarker.textContent = `Marker: ` + playerOne.marker;
+            pTwoMarker.textContent = `Marker: ` + playerTwo.marker;
 
+            // To minimise memory leaks
+            buttonChoices.removeEventListener('click', assignMarkers);
+            buttonChoices.remove();
+        }
+
+        [pOneMarker, pTwoMarker].forEach( (ele) => {
+                ele.addEventListener('click', () => {
+                    addMarkerChoices(ele);
                 });
-            });
         })
 
-        pOneName.appendChild(pOneNameBold);
-        pTwoName.appendChild(pTwoNameBold);
+        function addToGrid (cell, row, col) {
+            if (gameInProgress && !cell.textContent) {
+                cell.textContent = currentPlayerMarker;
+                markGrid(currentPlayerMarker, row, col);
+
+                const playerWon = winCheck(row, col);
+                if (playerWon || noMoreMoves()) {
+                    endGame(playerWon);
+                    return;
+                };
+                switchPlayers();
+            }
+        }
 
         for (let row = 0; row < 3; row++) {
             const gridRow = document.createElement('div');
@@ -275,19 +304,8 @@ const Gameboard = ( () => {
                 cell.dataset.row = String(row);
                 cell.dataset.col = String(col);
                 gridRow.appendChild(cell);
-
                 cell.addEventListener('click', () => {
-                    if (gameInProgress && !cell.textContent) {
-                        cell.textContent = currentPlayerMarker;
-                        markGrid(currentPlayerMarker, row, col);
-
-                        const playerWon = winCheck(row, col);
-                        if (playerWon || noMoreMoves()) {
-                            endGame(playerWon);
-                            return;
-                        };
-                        switchPlayers();
-                    }
+                    addToGrid(cell, row, col);
                 })
             }
         }
@@ -323,13 +341,15 @@ const Gameboard = ( () => {
         startBtn.disabled = false;
     }
 
-    const startBtn = document.querySelector('.startBtn')
-    startBtn.addEventListener('click', () => {
+    function startGame () {
         reset();
         if (playersCheck()) {
             gameInProgress = true;
-            startBtn.disabled = true;
             decideFirstPlayer();
+            startBtn.disabled = true;
         }
-    })
+    }
+
+    const startBtn = document.querySelector('.startBtn')
+    startBtn.addEventListener('click', startGame);
 })() 
